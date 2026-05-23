@@ -85,25 +85,25 @@
     flex: 1;
   }
 
-  /* Fixed map area bounding tracking framework */
+  /* Map Row Layout Wrapper */
   .map-area {
     position: relative;
-    background: #C0D8EC; /* Matched to sea color to avoid harsh edges */
+    background: #C0D8EC;
     height: 45vh;
     min-height: 350px;
     border-bottom: 1px solid rgba(44,31,14,0.1);
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
   }
   
-  /* Restricting scale container to preserve precise pixel layout track */
+  /* Absolute-tracking context matching the SVG dimensions */
   .map-frame {
     position: relative;
     width: 100%;
     height: 100%;
-    max-width: calc(45vh * (900 / 520)); /* Scale dynamically up to aspect ratio limit */
-    max-height: 100%;
+    max-width: calc(45vh * (900 / 520));
   }
 
   #map-svg-container {
@@ -242,7 +242,13 @@
   .reset-btn:hover { background: #4a3520; }
 
   /* ── PINS & TOOLTIPS ── */
-  .loc-pin { position: absolute; transform: translate(-50%, -100%); cursor: pointer; z-index: 10; transition: transform 0.18s ease, z-index 0s; }
+  .loc-pin { 
+    position: absolute; 
+    transform: translate(-50%, -100%); 
+    cursor: pointer; 
+    z-index: 10; 
+    transition: left 0.1s ease, top 0.1s ease, transform 0.18s ease; 
+  }
   .loc-pin:hover { transform: translate(-50%, -100%) scale(1.12); z-index: 20; }
   .loc-pin.selected { transform: translate(-50%, -100%) scale(1.1); z-index: 15; }
   .loc-pin.disabled { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
@@ -283,9 +289,9 @@
 
 <div class="main">
   <div class="map-area">
-    <div class="map-frame">
+    <div class="map-frame" id="map-frame-context">
       <div id="map-svg-container">
-        <svg viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+        <svg id="singapore-map-svg" viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
           <defs>
             <filter id="land-shadow">
               <feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="rgba(44,31,14,0.25)"/>
@@ -518,7 +524,7 @@ const locations = [
       "Buffy Fish Owl","Blue-throated Bee-eater","Chestnut-headed Bee-eater","Blue-winged Pitta",
       "Siberian Rubythroat","Siberian Blue Robin","Great Cormorant","Grey-rumped Swiftlet"
     ],
-    highlight: "Egrets, kingfishers & waders", terrain: "Tidal mudflats, mangroves & freshwater ponds", tip: "Visit at low tide — shorebirds feed on exposed mudflats.", px: 10.5, py: 36 },
+    highlight: "Egrets, kingfishers & waders", terrain: "Tidal mudflats, mangroves & freshwater ponds", tip: "Visit at low tide — shorebirds feed on exposed mudflats.", px: 115, py: 187 },
   { id: 2, name: "Pasir Ris Park", short: "Pasir Ris Park", icon: "🦀", habitat: "wetland", birds: 130,
     speciesSet: [...UBIQUITOUS,
       "Common Kingfisher","Stork-billed Kingfisher","Little Egret","Grey Heron","Purple Heron",
@@ -530,7 +536,7 @@ const locations = [
       "Marsh Sandpiper","Little Tern","Common Tern","Osprey","Changeable Hawk-Eagle","Grey-headed Fish Eagle",
       "Blue-throated Bee-eater","Blue-winged Pitta","Siberian Rubythroat","Greater Sand Plover","Lesser Sand Plover","Terek Sandpiper"
     ],
-    highlight: "Herons, sea eagles & sandpipers", terrain: "Coastal mangrove boardwalk & sandy beach", tip: "Walk the boardwalk and scan branches above the water.", px: 82, py: 44 },
+    highlight: "Herons, sea eagles & sandpipers", terrain: "Coastal mangrove boardwalk & sandy beach", tip: "Walk the boardwalk and scan branches above the water.", px: 738, py: 228 },
   { id: 3, name: "Pulau Ubin (Chek Jawa)", short: "Pulau Ubin", icon: "🏝️", habitat: "wetland", birds: 160,
     speciesSet: [...UBIQUITOUS,
       "Common Kingfisher","Stork-billed Kingfisher","Little Egret","Great Egret","Grey Heron",
@@ -545,7 +551,7 @@ const locations = [
       "Asian Fairy-bluebird","Blue-winged Pitta","Cinnamon-headed Green Pigeon","Little Green Pigeon",
       "Pied Imperial Pigeon","Green Imperial Pigeon","White-crowned Forktail","Malaysian Blue Flycatcher","White-necked Babbler","Changeable Hawk-Eagle"
     ],
-    highlight: "Storks, kingfishers & collared owls", terrain: "Seagrass lagoon, mangroves & coastal forest", tip: "Head to Chek Jawa at dawn for highest activity.", px: 88.5, py: 24 },
+    highlight: "Storks, kingfishers & collared owls", terrain: "Seagrass lagoon, mangroves & coastal forest", tip: "Head to Chek Jawa at dawn for highest activity.", px: 796, py: 125 },
   { id: 4, name: "Central Catchment Reserve", short: "Central Catchment", icon: "🌳", habitat: "rainforest", birds: 220,
     speciesSet: [...UBIQUITOUS,
       "Common Kingfisher","Stork-billed Kingfisher","Little Egret","Grey Heron","Purple Heron",
@@ -566,7 +572,7 @@ const locations = [
       "Verditer Flycatcher","Mugimaki Flycatcher","Asian Brown Flycatcher","Dark-sided Flycatcher","Narcissus Flycatcher",
       "Siberian Blue Robin","Siberian Rubythroat","Oriental Magpie-Robin","White-rumped Shama","Changeable Hawk-Eagle","Blyth's Hawk-Eagle","Wallace's Hawk-Eagle","Rufous-bellied Eagle","Buffy Fish Owl","Little Grebe"
     ],
-    highlight: "Pittas, flowerpeckers & babblers", terrain: "Primary lowland rainforest & reservoir edges", tip: "Move slowly — forest birds blend into canopy perfectly.", px: 46, py: 38 },
+    highlight: "Pittas, flowerpeckers & babblers", terrain: "Primary lowland rainforest & reservoir edges", tip: "Move slowly — forest birds blend into canopy perfectly.", px: 414, py: 198 },
   { id: 5, name: "Bukit Timah Nature Reserve", short: "Bukit Timah", icon: "⛰️", habitat: "rainforest", birds: 200,
     speciesSet: [...UBIQUITOUS,
       "Common Kingfisher","Stork-billed Kingfisher","Grey Heron","Black-crowned Night Heron",
@@ -583,7 +589,7 @@ const locations = [
       "Whiskered Treeswift","Cinnamon-headed Green Pigeon","Little Green Pigeon","Jambu Fruit Dove",
       "Large Green Pigeon","Pied Imperial Pigeon","Chestnut-backed Scimitar-Babbler","Large Scimitar-Babbler","Rufous-winged Philentoma","Maroon-breasted Philentoma","Verditer Flycatcher","Asian Brown Flycatcher","Dark-sided Flycatcher","Narcissus Flycatcher","Siberian Blue Robin","Oriental Magpie-Robin","White-rumped Shama","Changeable Hawk-Eagle","Blyth's Hawk-Eagle","Wallace's Hawk-Eagle","Rufous-bellied Eagle","Buffy Fish Owl","Brown Wood Owl","Straw-headed Bulbul"
     ],
-    highlight: "Drongos, woodpeckers & jungle fowl", terrain: "Primary hill summit rainforest trails", tip: "Bring binoculars — canopy dwellers look small from below.", px: 31, py: 45 },
+    highlight: "Drongos, woodpeckers & jungle fowl", terrain: "Primary hill summit rainforest trails", tip: "Bring binoculars — canopy dwellers look small from below.", px: 279, py: 234 },
   { id: 6, name: "Dairy Farm Nature Park", short: "Dairy Farm", icon: "🌲", habitat: "rainforest", birds: 120,
     speciesSet: [...UBIQUITOUS,
       "Common Kingfisher","Rufous Woodpecker","Banded Woodpecker","Common Flameback","Red Junglefowl",
@@ -595,14 +601,14 @@ const locations = [
       "Siberian Blue Robin","Oriental Magpie-Robin","White-rumped Shama","Changeable Hawk-Eagle",
       "Buffy Fish Owl","Straw-headed Bulbul","Little Grebe","Grey Heron","White-breasted Waterhen","Common Moorhen","Blue-crowned Hanging Parrot"
     ],
-    highlight: "Bulbuls, tailorbirds & starlings", terrain: "Secondary forest & old quarry lake margin", tip: "Scan the quarry lake edge for perched kingfishers.", px: 28, py: 36 },
+    highlight: "Bulbuls, tailorbirds & starlings", terrain: "Secondary forest & old quarry lake margin", tip: "Scan the quarry lake edge for perched kingfishers.", px: 252, py: 187 },
   { id: 7, name: "East Coast Park", short: "East Coast Park", icon: "🌊", habitat: "coastal", birds: 70,
     speciesSet: [...UBIQUITOUS,
       "White-bellied Sea Eagle","Little Tern","Common Tern","Black-naped Tern","White-winged Tern",
       "Whiskered Tern","Lesser Crested Tern","Pacific Golden Plover","Common Sandpiper","Terek Sandpiper",
       "Curlew Sandpiper","Sanderling","Little Ringed Plover","Kentish Plover","Lesser Sand Plover","House Swift","Grey-rumped Swiftlet"
     ],
-    highlight: "Terns, plovers & marine flyers", terrain: "Sandy beach & coastal open horizon", tip: "Scan skies over open water for fast-moving terns.", px: 68, py: 71 },
+    highlight: "Terns, plovers & marine flyers", terrain: "Sandy beach & coastal open horizon", tip: "Scan skies over open water for fast-moving terns.", px: 612, py: 369 },
   { id: 8, name: "Seletar Reservoir", short: "Seletar Reservoir", icon: "🚤", habitat: "coastal", birds: 110,
     speciesSet: [...UBIQUITOUS,
       "Common Kingfisher","Stork-billed Kingfisher","Little Egret","Grey Heron","Purple Heron",
@@ -611,7 +617,7 @@ const locations = [
       "Grey-headed Fish Eagle","Grey Wagtail","White Wagtail","Yellow Wagtail","Rufous Woodpecker",
       "Common Flameback","Greater Racket-tailed Drongo","Asian Fairy-bluebird","Blue-winged Leafbird","Little Grebe","Lesser Whistling-duck","Cotton Pygmy-goose","Purple Swamphen","Asian Brown Flycatcher","Oriental Magpie-Robin","White-rumped Shama"
     ],
-    highlight: "Cormorants, herons & wagtails", terrain: "Open reservoir margins & dam road", tip: "Walk the dam at dawn to see waterbirds roosting.", px: 57, py: 26 },
+    highlight: "Cormorants, herons & wagtails", terrain: "Open reservoir margins & dam road", tip: "Walk the dam at dawn to see waterbirds roosting.", px: 513, py: 135 },
   { id: 9, name: "Kranji Reservoir", short: "Kranji Reservoir", icon: "💦", habitat: "coastal", birds: 95,
     speciesSet: [...UBIQUITOUS,
       "Common Kingfisher","Stork-billed Kingfisher","Little Egret","Grey Heron","Purple Heron",
@@ -619,7 +625,7 @@ const locations = [
       "Common Sandpiper","White-bellied Sea Eagle","Brahminy Kite","Little Cormorant","Osprey",
       "Grey-headed Fish Eagle","Grey Wagtail","Yellow Wagtail","Copper-throated Sunbird","Mangrove Whistler","Mangrove Blue Flycatcher","Purple Swamphen","Lesser Whistling-duck","Cotton Pygmy-goose","Blue-tailed Bee-eater","Red-wattled Lapwing"
     ],
-    highlight: "Osprey, purple herons & water ducks", terrain: "Shoreline, mangrove fringe & dam view", tip: "The elevated dam wall layout offers excellent vistas.", px: 15, py: 44 },
+    highlight: "Osprey, purple herons & water ducks", terrain: "Shoreline, mangrove fringe & dam view", tip: "The elevated dam wall layout offers excellent vistas.", px: 135, py: 228 },
   { id: 10, name: "Singapore Botanic Gardens", short: "Botanic Gardens", icon: "🌺", habitat: "urban", birds: 95,
     speciesSet: [...UBIQUITOUS,
       "Common Kingfisher","Oriental Magpie-Robin","White-rumped Shama","Hill Myna","Asian Glossy Starling",
@@ -627,7 +633,7 @@ const locations = [
       "Straw-headed Bulbul","Blue-crowned Hanging Parrot","Long-tailed Parakeet","Red-breasted Parakeet",
       "White-bellied Munia","Scaly-breasted Munia","Chestnut Munia","Purple-throated Sunbird","Brown-throated Sunbird","Asian Palm Swift","Grey-rumped Treeswift","Rufous Woodpecker","Common Flameback","Greater Racket-tailed Drongo","Little Grebe","Grey Heron","White-breasted Waterhen"
     ],
-    highlight: "Parrots, sunbirds & hornbills", terrain: "Manicured botanical gardens & patch woods", tip: "Arrive early around 7-9am before tourist crowds arrive.", px: 37, py: 61 },
+    highlight: "Parrots, sunbirds & hornbills", terrain: "Manicured botanical gardens & patch woods", tip: "Arrive early around 7-9am before tourist crowds arrive.", px: 333, py: 317 },
   { id: 11, name: "Lower Peirce Reservoir", short: "Lower Peirce", icon: "💧", habitat: "urban", birds: 140,
     speciesSet: [...UBIQUITOUS,
       "Common Kingfisher","Stork-billed Kingfisher","Little Egret","Grey Heron","Purple Heron",
@@ -638,25 +644,51 @@ const locations = [
       "Blue-winged Leafbird","Greater Green Leafbird","Banded Pitta","Orange-bellied Flowerpecker",
       "Abbott's Babbler","Moustached Babbler","White-necked Babbler","White-throated Fantail","Malaysian Blue Flycatcher","White-crowned Forktail","Cinnamon-headed Green Pigeon","Little Green Pigeon","Jambu Fruit Dove","Velvet-fronted Nuthatch","Verditer Flycatcher","Asian Brown Flycatcher","Oriental Magpie-Robin","White-rumped Shama","Changeable Hawk-Eagle","Buffy Fish Owl","Little Grebe","Lesser Whistling-duck","Purple Swamphen"
     ],
-    highlight: "Kingfishers, owls & forest babblers", terrain: "Forest reservoir edges & boardwalks", tip: "Stay patient along the shaded boardwalk sections.", px: 47, py: 46 },
+    highlight: "Kingfishers, owls & forest babblers", terrain: "Forest reservoir edges & boardwalks", tip: "Stay patient along the shaded boardwalk sections.", px: 423, py: 239 },
   { id: 12, name: "Bishan-Ang Mo Kio Park", short: "Bishan-AMK Park", icon: "🏙️", habitat: "urban", birds: 65,
     speciesSet: [...UBIQUITOUS,
       "Common Kingfisher","Little Egret","Grey Heron","White-breasted Waterhen","Common Moorhen",
       "Common Sandpiper","White-bellied Sea Eagle","Oriental Magpie-Robin","White-rumped Shama","Grey Wagtail","Little Grebe","Asian Palm Swift"
     ],
-    highlight: "Urban kingfishers & open grassland herons", terrain: "Naturalised urban river corridor", tip: "Watch quietly from bridges spanning the river line.", px: 52, py: 41 },
+    highlight: "Urban kingfishers & open grassland herons", terrain: "Naturalised urban river corridor", tip: "Watch quietly from bridges spanning the river line.", px: 468, py: 213 },
 ];
 
 const habitatColor = { wetland: '#1D9E75', rainforest: '#4E8B2A', coastal: '#3070A8', urban: '#B07D2A' };
 let selected = [];
 
+// Real-time ViewBox aspect tracker for rendering positioning vectors
 function renderPins() {
   const layer = document.getElementById('pins-layer');
-  const container = document.getElementById('map-svg-container');
-  const W = container.offsetWidth;
-  const H = container.offsetHeight;
+  const svgElement = document.getElementById('singapore-map-svg');
+  
+  if (!svgElement) return;
+  
   layer.innerHTML = '';
   layer.style.pointerEvents = 'auto';
+
+  // Extract real browser layouts for live geometric translations
+  const svgRect = svgElement.getBoundingClientRect();
+  const viewBoxWidth = 900;
+  const viewBoxHeight = 520;
+
+  // Track the actual scaling values applied by preserveAspectRatio="xMidYMid meet"
+  const containerRatio = svgRect.width / svgRect.height;
+  const nativeRatio = viewBoxWidth / viewBoxHeight;
+  
+  let actualWidth = svgRect.width;
+  let actualHeight = svgRect.height;
+  let offsetX = 0;
+  let offsetY = 0;
+
+  if (containerRatio > nativeRatio) {
+    // Letterboxed left/right
+    actualWidth = svgRect.height * nativeRatio;
+    offsetX = (svgRect.width - actualWidth) / 2;
+  } else {
+    // Letterboxed top/bottom
+    actualHeight = svgRect.width / nativeRatio;
+    offsetY = (svgRect.height - actualHeight) / 2;
+  }
 
   locations.forEach(loc => {
     const isSel = selected.includes(loc.id);
@@ -664,8 +696,13 @@ function renderPins() {
 
     const pin = document.createElement('div');
     pin.className = `loc-pin pin-${loc.habitat}${isSel ? ' selected' : ''}${isDisabled ? ' disabled' : ''}`;
-    pin.style.left = (loc.px / 100 * W) + 'px';
-    pin.style.top = (loc.py / 100 * H) + 'px';
+    
+    // Project exact viewbox coordinates smoothly onto computed frame points
+    const pixelX = offsetX + (loc.px / viewBoxWidth) * actualWidth;
+    const pixelY = offsetY + (loc.py / viewBoxHeight) * actualHeight;
+
+    pin.style.left = `${pixelX}px`;
+    pin.style.top = `${pixelY}px`;
 
     const color = habitatColor[loc.habitat];
 
