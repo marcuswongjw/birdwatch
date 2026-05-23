@@ -31,15 +31,14 @@
     font-family: 'DM Sans', sans-serif;
     color: var(--bark);
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+    overflow-x: hidden;
   }
 
   /* ── HEADER ── */
   header {
     background: var(--bark);
     color: var(--cream);
-    padding: 1.2rem 2rem 1rem;
+    padding: 1.5rem 2rem 1.2rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -47,7 +46,7 @@
   }
   header h1 {
     font-family: 'Playfair Display', serif;
-    font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+    font-size: clamp(1.2rem, 2.5vw, 1.8rem);
     font-weight: 700;
     letter-spacing: -0.01em;
   }
@@ -70,7 +69,7 @@
 
   /* ── LEGEND ── */
   .legend {
-    display: flex; gap: 1.2rem; padding: 0.6rem 2rem;
+    display: flex; gap: 1.2rem; padding: 0.75rem 2rem;
     background: rgba(44,31,14,0.06); border-bottom: 1px solid rgba(44,31,14,0.1); flex-wrap: wrap;
   }
   .legend-item {
@@ -80,67 +79,102 @@
 
   /* ── MAIN LAYOUT ── */
   .main {
+    display: grid;
+    grid-template-columns: 1fr 720px;
+    gap: 0;
+    height: calc(100vh - 100px);
+  }
+
+  /* ── MAP AREA ── */
+  .map-area { position: relative; background: #C8DFF0; overflow: hidden; }
+  .map-area::before {
+    content: ''; position: absolute; inset: 0;
+    background-image:
+      radial-gradient(ellipse at 20% 80%, rgba(74,127,165,0.25) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, rgba(74,127,165,0.2) 0%, transparent 40%);
+    pointer-events: none; z-index: 0;
+  }
+  .map-wrapper { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+  #map-svg-container { position: relative; width: 100%; height: 100%; }
+  #map-svg-container svg { width: 100%; height: 100%; }
+
+  /* ── LOCATION PINS ── */
+  .loc-pin { position: absolute; transform: translate(-50%, -100%); cursor: pointer; z-index: 10; transition: transform 0.18s ease, z-index 0s; }
+  .loc-pin:hover { transform: translate(-50%, -100%) scale(1.12); z-index: 20; }
+  .loc-pin.selected { transform: translate(-50%, -100%) scale(1.1); z-index: 15; }
+  .loc-pin.disabled { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
+  .loc-pin.selected.disabled { opacity: 1; pointer-events: auto; }
+
+  .pin-bubble {
+    background: white; border: 2.5px solid #ccc; border-radius: 10px; padding: 5px 8px;
+    display: flex; align-items: center; gap: 5px; box-shadow: 0 3px 12px rgba(0,0,0,0.18), 0 1px 3px rgba(0,0,0,0.1);
+    white-space: nowrap; position: relative; transition: border-color 0.18s, background 0.18s, box-shadow 0.18s; max-width: 175px;
+  }
+  .pin-bubble::after {
+    content: ''; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%);
+    border: 5px solid transparent; border-top-color: #ccc; transition: border-top-color 0.18s;
+  }
+  .loc-pin.selected .pin-bubble { box-shadow: 0 4px 16px rgba(0,0,0,0.25), 0 2px 6px rgba(0,0,0,0.15); }
+  .pin-icon { font-size: 14px; flex-shrink: 0; }
+  .pin-label { font-size: 11px; font-weight: 600; color: var(--bark); line-height: 1.2; font-family: 'DM Sans', sans-serif; }
+  .pin-check {
+    width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 9px; color: white; flex-shrink: 0; opacity: 0; transition: opacity 0.18s;
+  }
+  .loc-pin.selected .pin-check { opacity: 1; }
+
+  .pin-wetland .pin-bubble { border-color: var(--wetland); background: var(--wetland-light); }
+  .pin-wetland .pin-bubble::after { border-top-color: var(--wetland); }
+  .pin-wetland .pin-check { background: var(--wetland); }
+  .pin-rainforest .pin-bubble { border-color: var(--rainforest); background: var(--rainforest-light); }
+  .pin-rainforest .pin-bubble::after { border-top-color: var(--rainforest); }
+  .pin-rainforest .pin-check { background: var(--rainforest); }
+  .pin-coastal .pin-bubble { border-color: var(--coastal); background: var(--coastal-light); }
+  .pin-coastal .pin-bubble::after { border-top-color: var(--coastal); }
+  .pin-coastal .pin-check { background: var(--coastal); }
+  .pin-urban .pin-bubble { border-color: var(--urban); background: var(--urban-light); }
+  .pin-urban .pin-bubble::after { border-top-color: var(--urban); }
+  .pin-urban .pin-check { background: var(--urban); }
+
+  /* ── SIDE PANEL TWO-COLUMN REFACTOR ── */
+  .side-panel {
+    background: white;
+    border-left: 1px solid rgba(44,31,14,0.1);
     display: flex;
     flex-direction: column;
-    flex: 1;
-  }
-
-  /* Map Row Layout Wrapper */
-  .map-area {
-    position: relative;
-    background: #C0D8EC;
-    height: 45vh;
-    min-height: 350px;
-    border-bottom: 1px solid rgba(44,31,14,0.1);
-    display: flex;
-    justify-content: center;
-    align-items: center;
     overflow: hidden;
   }
-  
-  /* Absolute-tracking context matching the SVG dimensions */
-  .map-frame {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    max-width: calc(45vh * (900 / 520));
-  }
 
-  #map-svg-container {
-    width: 100%;
-    height: 100%;
-    position: relative;
+  .panel-instructions {
+    padding: 1.25rem;
+    border-bottom: 1px solid rgba(44,31,14,0.08);
   }
+  .panel-instructions h2 { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 600; margin-bottom: 5px; }
+  .panel-instructions p { font-size: 0.8rem; color: #666; line-height: 1.5; }
 
-  #map-svg-container svg {
-    width: 100%;
-    height: 100%;
-    display: block;
-  }
-
-  /* ── DASHBOARD COLUMNS BELOW MAP ── */
-  .dashboard-columns {
+  /* Two column container splitting selections and results */
+  .panel-split-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
     flex: 1;
-    background: white;
+    overflow: hidden;
   }
 
   .selections-column {
-    padding: 1.5rem;
+    padding: 1.25rem;
     border-right: 1px solid rgba(44,31,14,0.08);
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 0.2rem;
-    overflow-y: auto;
   }
 
   .results-column {
-    padding: 1.5rem;
+    padding: 1.25rem;
+    overflow-y: auto;
     background: #FAFAFA;
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
   }
 
   /* ── SELECTION SLOTS ── */
@@ -199,10 +233,10 @@
   .slot-urban { border-color: var(--urban); background: var(--urban-light); }
   .slot-urban .slot-number { background: var(--urban); }
 
-  /* ── RESULTS ── */
+  /* ── RESULTS CONFIGURATION ── */
   .results-blank-state {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    flex: 1; min-height: 240px; color: #aaa; font-style: italic; font-size: 0.85rem; text-align: center; padding: 2rem;
+    height: 100%; color: #aaa; font-style: italic; font-size: 0.85rem; text-align: center; padding: 2rem;
     border: 2px dashed rgba(44,31,14,0.05); border-radius: 12px; background: rgba(0,0,0,0.01);
   }
   .results-area { display: none; }
@@ -223,13 +257,13 @@
   .stat-bonus-label { font-size: 0.72rem; color: #A07030; font-weight: 500; margin-top: 2px; }
 
   .guilds-title { font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--bark); margin: 1rem 0 0.5rem; }
-  .guild-container { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1rem; }
+  .guild-container { display: flex; flex-direction: column; gap: 6px; margin-bottom: 1rem; }
   .guild-card { background: white; border: 1px solid rgba(44,31,14,0.08); border-radius: 6px; padding: 6px 10px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
   .guild-card.empty { opacity: 0.45; border-style: dashed; background: rgba(0,0,0,0.01); box-shadow: none; }
   .guild-info { display: flex; align-items: center; gap: 8px; }
   .guild-icon { font-size: 1.1rem; }
   .guild-name { font-size: 0.78rem; font-weight: 500; }
-  .guild-count { font-size: 0.75rem; font-weight: 600; background: rgba(44,31,14,0.06); padding: 2px 6px; border-radius: 4px; white-space: nowrap; }
+  .guild-count { font-size: 0.75rem; font-weight: 600; background: rgba(44,31,14,0.06); padding: 2px 6px; border-radius: 4px; }
   .guild-card.empty .guild-count { color: #C03030; background: #FFF0F0; }
 
   .tip-card { background: #FFFBF0; border: 1px solid var(--reed); border-radius: 8px; padding: 0.7rem 0.85rem; font-size: 0.75rem; color: #6B4F1A; line-height: 1.5; }
@@ -241,19 +275,7 @@
   }
   .reset-btn:hover { background: #4a3520; }
 
-  /* ── PINS & TOOLTIPS ── */
-  .loc-pin { 
-    position: absolute; 
-    transform: translate(-50%, -100%); 
-    cursor: pointer; 
-    z-index: 10; 
-    transition: left 0.1s ease, top 0.1s ease, transform 0.18s ease; 
-  }
-  .loc-pin:hover { transform: translate(-50%, -100%) scale(1.12); z-index: 20; }
-  .loc-pin.selected { transform: translate(-50%, -100%) scale(1.1); z-index: 15; }
-  .loc-pin.disabled { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
-  .loc-pin.selected.disabled { opacity: 1; pointer-events: auto; }
-
+  /* ── TOOLTIP ── */
   .pin-tooltip {
     position: absolute; bottom: calc(100% + 12px); left: 50%; transform: translateX(-50%); background: var(--bark); color: var(--cream);
     border-radius: 8px; padding: 8px 12px; font-size: 11px; line-height: 1.5; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity 0.15s; z-index: 30; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
@@ -262,11 +284,21 @@
   .pin-tooltip strong { display: block; margin-bottom: 2px; color: var(--reed); }
   .pin-tooltip::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 5px solid transparent; border-top-color: var(--bark); }
 
-  /* ── RESPONSIVENESS ── */
-  @media (max-width: 840px) {
-    .dashboard-columns { grid-template-columns: 1fr; }
-    .selections-column { border-right: none; border-bottom: 1px solid rgba(44,31,14,0.08); }
-    .guild-container { grid-template-columns: 1fr; }
+  /* ── RESPONSIVE RESPONSIVENESS ── */
+  @media (max-width: 1100px) {
+    .main { grid-template-columns: 1fr 400px; }
+    .panel-split-container { grid-template-columns: 1fr; overflow-y: auto; }
+    .selections-column { border-right: none; border-bottom: 1px solid rgba(44,31,14,0.08); overflow-y: visible; }
+    .results-column { overflow-y: visible; }
+  }
+
+  @media (max-width: 768px) {
+    .main { grid-template-columns: 1fr; grid-template-rows: 50vh auto; height: auto; }
+    .side-panel { border-left: none; border-top: 1px solid rgba(44,31,14,0.1); }
+    .map-area { height: 50vh; }
+    header { padding: 1rem; }
+    .legend { padding: 0.5rem 1rem; gap: 0.75rem; }
+    .panel-split-container { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -289,9 +321,9 @@
 
 <div class="main">
   <div class="map-area">
-    <div class="map-frame" id="map-frame-context">
+    <div class="map-wrapper">
       <div id="map-svg-container">
-        <svg id="singapore-map-svg" viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+        <svg viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
           <defs>
             <filter id="land-shadow">
               <feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="rgba(44,31,14,0.25)"/>
@@ -349,63 +381,70 @@
     </div>
   </div>
 
-  <div class="dashboard-columns">
-    <div class="selections-column">
-      <div class="slot" id="slot-0">
-        <div class="slot-header-row">
-          <div class="slot-number">1</div>
-          <div class="slot-content"><div class="slot-empty-text">Select a location from the map</div></div>
-          <button class="slot-remove" onclick="removeSlot(0)" title="Remove">✕</button>
-        </div>
-      </div>
-      <div class="slot" id="slot-1">
-        <div class="slot-header-row">
-          <div class="slot-number">2</div>
-          <div class="slot-content"><div class="slot-empty-text">Select a location from the map</div></div>
-          <button class="slot-remove" onclick="removeSlot(1)" title="Remove">✕</button>
-        </div>
-      </div>
-      <div class="slot" id="slot-2">
-        <div class="slot-header-row">
-          <div class="slot-number">3</div>
-          <div class="slot-content"><div class="slot-empty-text">Select a location from the map</div></div>
-          <button class="slot-remove" onclick="removeSlot(2)" title="Remove">✕</button>
-        </div>
-      </div>
+  <div class="side-panel">
+    <div class="panel-instructions">
+      <h2>🎯 Your Mission</h2>
+      <p>You are a bird photographer! Choose <strong>3 locations</strong> by tapping pins on the map. Target a high diversity of species and guilds across unique habitats.</p>
     </div>
 
-    <div class="results-column">
-      <div class="results-blank-state" id="results-blank-state">
-        📊 Select 3 locations to calculate your birdwatching plan summary and score breakdown
+    <div class="panel-split-container">
+      <div class="selections-column">
+        <div class="slot" id="slot-0">
+          <div class="slot-header-row">
+            <div class="slot-number">1</div>
+            <div class="slot-content"><div class="slot-empty-text">Select a location from the map</div></div>
+            <button class="slot-remove" onclick="removeSlot(0)" title="Remove">✕</button>
+          </div>
+        </div>
+        <div class="slot" id="slot-1">
+          <div class="slot-header-row">
+            <div class="slot-number">2</div>
+            <div class="slot-content"><div class="slot-empty-text">Select a location from the map</div></div>
+            <button class="slot-remove" onclick="removeSlot(1)" title="Remove">✕</button>
+          </div>
+        </div>
+        <div class="slot" id="slot-2">
+          <div class="slot-header-row">
+            <div class="slot-number">3</div>
+            <div class="slot-content"><div class="slot-empty-text">Select a location from the map</div></div>
+            <button class="slot-remove" onclick="removeSlot(2)" title="Remove">✕</button>
+          </div>
+        </div>
       </div>
-      
-      <div class="results-area" id="results-area">
-        <div class="results-title">📋 Your Birdwatching Plan</div>
-        <div class="stats-grid">
-          <div class="stat-box score">
-            <div class="stat-num" id="res-score">0</div>
-            <div class="stat-desc">Total Diversity Score</div>
-            <div class="stat-bonus-label" id="res-bonus-label">Multiplier: x1.0</div>
-          </div>
-          <div class="stat-box species">
-            <div class="stat-num" id="res-species">0</div>
-            <div class="stat-desc">Unique Species</div>
-          </div>
-          <div class="stat-box birds">
-            <div class="stat-num" id="res-birds">0</div>
-            <div class="stat-desc">Est. Birds Sighted</div>
-          </div>
-        </div>
 
-        <div class="guilds-title">🌿 Ecological Group Coverage</div>
-        <div class="guild-container" id="guilds-breakdown">
+      <div class="results-column">
+        <div class="results-blank-state" id="results-blank-state">
+          📊 Select 3 locations to calculate your birdwatching plan summary and score breakdown
+        </div>
+        
+        <div class="results-area" id="results-area">
+          <div class="results-title">📋 Your Birdwatching Plan</div>
+          <div class="stats-grid">
+            <div class="stat-box score">
+              <div class="stat-num" id="res-score">0</div>
+              <div class="stat-desc">Total Diversity Score</div>
+              <div class="stat-bonus-label" id="res-bonus-label">Multiplier: x1.0</div>
+            </div>
+            <div class="stat-box species">
+              <div class="stat-num" id="res-species">0</div>
+              <div class="stat-desc">Unique Species</div>
+            </div>
+            <div class="stat-box birds">
+              <div class="stat-num" id="res-birds">0</div>
+              <div class="stat-desc">Est. Birds Sighted</div>
+            </div>
           </div>
 
-        <div class="tip-card" id="res-tip">
-          <strong>📷 Photographer Tip</strong>
-          <span id="res-tip-text"></span>
+          <div class="guilds-title">🌿 Ecological Group Coverage</div>
+          <div class="guild-container" id="guilds-breakdown">
+            </div>
+
+          <div class="tip-card" id="res-tip">
+            <strong>📷 Photographer Tip</strong>
+            <span id="res-tip-text"></span>
+          </div>
+          <button class="reset-btn" onclick="resetAll()">↩ Choose Different Locations</button>
         </div>
-        <button class="reset-btn" onclick="resetAll()">↩ Choose Different Locations</button>
       </div>
     </div>
   </div>
@@ -524,7 +563,7 @@ const locations = [
       "Buffy Fish Owl","Blue-throated Bee-eater","Chestnut-headed Bee-eater","Blue-winged Pitta",
       "Siberian Rubythroat","Siberian Blue Robin","Great Cormorant","Grey-rumped Swiftlet"
     ],
-    highlight: "Egrets, kingfishers & waders", terrain: "Tidal mudflats, mangroves & freshwater ponds", tip: "Visit at low tide — shorebirds feed on exposed mudflats.", px: 115, py: 187 },
+    highlight: "Egrets, kingfishers & waders", terrain: "Tidal mudflats, mangroves & freshwater ponds", tip: "Visit at low tide — shorebirds feed on exposed mudflats.", px: 10.5, py: 36 },
   { id: 2, name: "Pasir Ris Park", short: "Pasir Ris Park", icon: "🦀", habitat: "wetland", birds: 130,
     speciesSet: [...UBIQUITOUS,
       "Common Kingfisher","Stork-billed Kingfisher","Little Egret","Grey Heron","Purple Heron",
@@ -536,7 +575,7 @@ const locations = [
       "Marsh Sandpiper","Little Tern","Common Tern","Osprey","Changeable Hawk-Eagle","Grey-headed Fish Eagle",
       "Blue-throated Bee-eater","Blue-winged Pitta","Siberian Rubythroat","Greater Sand Plover","Lesser Sand Plover","Terek Sandpiper"
     ],
-    highlight: "Herons, sea eagles & sandpipers", terrain: "Coastal mangrove boardwalk & sandy beach", tip: "Walk the boardwalk and scan branches above the water.", px: 738, py: 228 },
+    highlight: "Herons, sea eagles & sandpipers", terrain: "Coastal mangrove boardwalk & sandy beach", tip: "Walk the boardwalk and scan branches above the water.", px: 82, py: 44 },
   { id: 3, name: "Pulau Ubin (Chek Jawa)", short: "Pulau Ubin", icon: "🏝️", habitat: "wetland", birds: 160,
     speciesSet: [...UBIQUITOUS,
       "Common Kingfisher","Stork-billed Kingfisher","Little Egret","Great Egret","Grey Heron",
@@ -551,7 +590,7 @@ const locations = [
       "Asian Fairy-bluebird","Blue-winged Pitta","Cinnamon-headed Green Pigeon","Little Green Pigeon",
       "Pied Imperial Pigeon","Green Imperial Pigeon","White-crowned Forktail","Malaysian Blue Flycatcher","White-necked Babbler","Changeable Hawk-Eagle"
     ],
-    highlight: "Storks, kingfishers & collared owls", terrain: "Seagrass lagoon, mangroves & coastal forest", tip: "Head to Chek Jawa at dawn for highest activity.", px: 796, py: 125 },
+    highlight: "Storks, kingfishers & collared owls", terrain: "Seagrass lagoon, mangroves & coastal forest", tip: "Head to Chek Jawa at dawn for highest activity.", px: 88.5, py: 24 },
   { id: 4, name: "Central Catchment Reserve", short: "Central Catchment", icon: "🌳", habitat: "rainforest", birds: 220,
     speciesSet: [...UBIQUITOUS,
       "Common Kingfisher","Stork-billed Kingfisher","Little Egret","Grey Heron","Purple Heron",
@@ -572,7 +611,7 @@ const locations = [
       "Verditer Flycatcher","Mugimaki Flycatcher","Asian Brown Flycatcher","Dark-sided Flycatcher","Narcissus Flycatcher",
       "Siberian Blue Robin","Siberian Rubythroat","Oriental Magpie-Robin","White-rumped Shama","Changeable Hawk-Eagle","Blyth's Hawk-Eagle","Wallace's Hawk-Eagle","Rufous-bellied Eagle","Buffy Fish Owl","Little Grebe"
     ],
-    highlight: "Pittas, flowerpeckers & babblers", terrain: "Primary lowland rainforest & reservoir edges", tip: "Move slowly — forest birds blend into canopy perfectly.", px: 414, py: 198 },
+    highlight: "Pittas, flowerpeckers & babblers", terrain: "Primary lowland rainforest & reservoir edges", tip: "Move slowly — forest birds blend into canopy perfectly.", px: 46, py: 38 },
   { id: 5, name: "Bukit Timah Nature Reserve", short: "Bukit Timah", icon: "⛰️", habitat: "rainforest", birds: 200,
     speciesSet: [...UBIQUITOUS,
       "Common Kingfisher","Stork-billed Kingfisher","Grey Heron","Black-crowned Night Heron",
@@ -589,7 +628,7 @@ const locations = [
       "Whiskered Treeswift","Cinnamon-headed Green Pigeon","Little Green Pigeon","Jambu Fruit Dove",
       "Large Green Pigeon","Pied Imperial Pigeon","Chestnut-backed Scimitar-Babbler","Large Scimitar-Babbler","Rufous-winged Philentoma","Maroon-breasted Philentoma","Verditer Flycatcher","Asian Brown Flycatcher","Dark-sided Flycatcher","Narcissus Flycatcher","Siberian Blue Robin","Oriental Magpie-Robin","White-rumped Shama","Changeable Hawk-Eagle","Blyth's Hawk-Eagle","Wallace's Hawk-Eagle","Rufous-bellied Eagle","Buffy Fish Owl","Brown Wood Owl","Straw-headed Bulbul"
     ],
-    highlight: "Drongos, woodpeckers & jungle fowl", terrain: "Primary hill summit rainforest trails", tip: "Bring binoculars — canopy dwellers look small from below.", px: 279, py: 234 },
+    highlight: "Drongos, woodpeckers & jungle fowl", terrain: "Primary hill summit rainforest trails", tip: "Bring binoculars — canopy dwellers look small from below.", px: 31, py: 45 },
   { id: 6, name: "Dairy Farm Nature Park", short: "Dairy Farm", icon: "🌲", habitat: "rainforest", birds: 120,
     speciesSet: [...UBIQUITOUS,
       "Common Kingfisher","Rufous Woodpecker","Banded Woodpecker","Common Flameback","Red Junglefowl",
@@ -601,14 +640,14 @@ const locations = [
       "Siberian Blue Robin","Oriental Magpie-Robin","White-rumped Shama","Changeable Hawk-Eagle",
       "Buffy Fish Owl","Straw-headed Bulbul","Little Grebe","Grey Heron","White-breasted Waterhen","Common Moorhen","Blue-crowned Hanging Parrot"
     ],
-    highlight: "Bulbuls, tailorbirds & starlings", terrain: "Secondary forest & old quarry lake margin", tip: "Scan the quarry lake edge for perched kingfishers.", px: 252, py: 187 },
+    highlight: "Bulbuls, tailorbirds & starlings", terrain: "Secondary forest & old quarry lake margin", tip: "Scan the quarry lake edge for perched kingfishers.", px: 28, py: 36 },
   { id: 7, name: "East Coast Park", short: "East Coast Park", icon: "🌊", habitat: "coastal", birds: 70,
     speciesSet: [...UBIQUITOUS,
       "White-bellied Sea Eagle","Little Tern","Common Tern","Black-naped Tern","White-winged Tern",
       "Whiskered Tern","Lesser Crested Tern","Pacific Golden Plover","Common Sandpiper","Terek Sandpiper",
       "Curlew Sandpiper","Sanderling","Little Ringed Plover","Kentish Plover","Lesser Sand Plover","House Swift","Grey-rumped Swiftlet"
     ],
-    highlight: "Terns, plovers & marine flyers", terrain: "Sandy beach & coastal open horizon", tip: "Scan skies over open water for fast-moving terns.", px: 612, py: 369 },
+    highlight: "Terns, plovers & marine flyers", terrain: "Sandy beach & coastal open horizon", tip: "Scan skies over open water for fast-moving terns.", px: 68, py: 71 },
   { id: 8, name: "Seletar Reservoir", short: "Seletar Reservoir", icon: "🚤", habitat: "coastal", birds: 110,
     speciesSet: [...UBIQUITOUS,
       "Common Kingfisher","Stork-billed Kingfisher","Little Egret","Grey Heron","Purple Heron",
@@ -617,7 +656,7 @@ const locations = [
       "Grey-headed Fish Eagle","Grey Wagtail","White Wagtail","Yellow Wagtail","Rufous Woodpecker",
       "Common Flameback","Greater Racket-tailed Drongo","Asian Fairy-bluebird","Blue-winged Leafbird","Little Grebe","Lesser Whistling-duck","Cotton Pygmy-goose","Purple Swamphen","Asian Brown Flycatcher","Oriental Magpie-Robin","White-rumped Shama"
     ],
-    highlight: "Cormorants, herons & wagtails", terrain: "Open reservoir margins & dam road", tip: "Walk the dam at dawn to see waterbirds roosting.", px: 513, py: 135 },
+    highlight: "Cormorants, herons & wagtails", terrain: "Open reservoir margins & dam road", tip: "Walk the dam at dawn to see waterbirds roosting.", px: 57, py: 26 },
   { id: 9, name: "Kranji Reservoir", short: "Kranji Reservoir", icon: "💦", habitat: "coastal", birds: 95,
     speciesSet: [...UBIQUITOUS,
       "Common Kingfisher","Stork-billed Kingfisher","Little Egret","Grey Heron","Purple Heron",
@@ -625,7 +664,7 @@ const locations = [
       "Common Sandpiper","White-bellied Sea Eagle","Brahminy Kite","Little Cormorant","Osprey",
       "Grey-headed Fish Eagle","Grey Wagtail","Yellow Wagtail","Copper-throated Sunbird","Mangrove Whistler","Mangrove Blue Flycatcher","Purple Swamphen","Lesser Whistling-duck","Cotton Pygmy-goose","Blue-tailed Bee-eater","Red-wattled Lapwing"
     ],
-    highlight: "Osprey, purple herons & water ducks", terrain: "Shoreline, mangrove fringe & dam view", tip: "The elevated dam wall layout offers excellent vistas.", px: 135, py: 228 },
+    highlight: "Osprey, purple herons & water ducks", terrain: "Shoreline, mangrove fringe & dam view", tip: "The elevated dam wall layout offers excellent vistas.", px: 15, py: 44 },
   { id: 10, name: "Singapore Botanic Gardens", short: "Botanic Gardens", icon: "🌺", habitat: "urban", birds: 95,
     speciesSet: [...UBIQUITOUS,
       "Common Kingfisher","Oriental Magpie-Robin","White-rumped Shama","Hill Myna","Asian Glossy Starling",
@@ -633,7 +672,7 @@ const locations = [
       "Straw-headed Bulbul","Blue-crowned Hanging Parrot","Long-tailed Parakeet","Red-breasted Parakeet",
       "White-bellied Munia","Scaly-breasted Munia","Chestnut Munia","Purple-throated Sunbird","Brown-throated Sunbird","Asian Palm Swift","Grey-rumped Treeswift","Rufous Woodpecker","Common Flameback","Greater Racket-tailed Drongo","Little Grebe","Grey Heron","White-breasted Waterhen"
     ],
-    highlight: "Parrots, sunbirds & hornbills", terrain: "Manicured botanical gardens & patch woods", tip: "Arrive early around 7-9am before tourist crowds arrive.", px: 333, py: 317 },
+    highlight: "Parrots, sunbirds & hornbills", terrain: "Manicured botanical gardens & patch woods", tip: "Arrive early around 7-9am before tourist crowds arrive.", px: 37, py: 61 },
   { id: 11, name: "Lower Peirce Reservoir", short: "Lower Peirce", icon: "💧", habitat: "urban", birds: 140,
     speciesSet: [...UBIQUITOUS,
       "Common Kingfisher","Stork-billed Kingfisher","Little Egret","Grey Heron","Purple Heron",
@@ -644,51 +683,25 @@ const locations = [
       "Blue-winged Leafbird","Greater Green Leafbird","Banded Pitta","Orange-bellied Flowerpecker",
       "Abbott's Babbler","Moustached Babbler","White-necked Babbler","White-throated Fantail","Malaysian Blue Flycatcher","White-crowned Forktail","Cinnamon-headed Green Pigeon","Little Green Pigeon","Jambu Fruit Dove","Velvet-fronted Nuthatch","Verditer Flycatcher","Asian Brown Flycatcher","Oriental Magpie-Robin","White-rumped Shama","Changeable Hawk-Eagle","Buffy Fish Owl","Little Grebe","Lesser Whistling-duck","Purple Swamphen"
     ],
-    highlight: "Kingfishers, owls & forest babblers", terrain: "Forest reservoir edges & boardwalks", tip: "Stay patient along the shaded boardwalk sections.", px: 423, py: 239 },
+    highlight: "Kingfishers, owls & forest babblers", terrain: "Forest reservoir edges & boardwalks", tip: "Stay patient along the shaded boardwalk sections.", px: 47, py: 46 },
   { id: 12, name: "Bishan-Ang Mo Kio Park", short: "Bishan-AMK Park", icon: "🏙️", habitat: "urban", birds: 65,
     speciesSet: [...UBIQUITOUS,
       "Common Kingfisher","Little Egret","Grey Heron","White-breasted Waterhen","Common Moorhen",
       "Common Sandpiper","White-bellied Sea Eagle","Oriental Magpie-Robin","White-rumped Shama","Grey Wagtail","Little Grebe","Asian Palm Swift"
     ],
-    highlight: "Urban kingfishers & open grassland herons", terrain: "Naturalised urban river corridor", tip: "Watch quietly from bridges spanning the river line.", px: 468, py: 213 },
+    highlight: "Urban kingfishers & open grassland herons", terrain: "Naturalised urban river corridor", tip: "Watch quietly from bridges spanning the river line.", px: 52, py: 41 },
 ];
 
 const habitatColor = { wetland: '#1D9E75', rainforest: '#4E8B2A', coastal: '#3070A8', urban: '#B07D2A' };
 let selected = [];
 
-// Real-time ViewBox aspect tracker for rendering positioning vectors
 function renderPins() {
   const layer = document.getElementById('pins-layer');
-  const svgElement = document.getElementById('singapore-map-svg');
-  
-  if (!svgElement) return;
-  
+  const container = document.getElementById('map-svg-container');
+  const W = container.offsetWidth;
+  const H = container.offsetHeight;
   layer.innerHTML = '';
   layer.style.pointerEvents = 'auto';
-
-  // Extract real browser layouts for live geometric translations
-  const svgRect = svgElement.getBoundingClientRect();
-  const viewBoxWidth = 900;
-  const viewBoxHeight = 520;
-
-  // Track the actual scaling values applied by preserveAspectRatio="xMidYMid meet"
-  const containerRatio = svgRect.width / svgRect.height;
-  const nativeRatio = viewBoxWidth / viewBoxHeight;
-  
-  let actualWidth = svgRect.width;
-  let actualHeight = svgRect.height;
-  let offsetX = 0;
-  let offsetY = 0;
-
-  if (containerRatio > nativeRatio) {
-    // Letterboxed left/right
-    actualWidth = svgRect.height * nativeRatio;
-    offsetX = (svgRect.width - actualWidth) / 2;
-  } else {
-    // Letterboxed top/bottom
-    actualHeight = svgRect.width / nativeRatio;
-    offsetY = (svgRect.height - actualHeight) / 2;
-  }
 
   locations.forEach(loc => {
     const isSel = selected.includes(loc.id);
@@ -696,13 +709,8 @@ function renderPins() {
 
     const pin = document.createElement('div');
     pin.className = `loc-pin pin-${loc.habitat}${isSel ? ' selected' : ''}${isDisabled ? ' disabled' : ''}`;
-    
-    // Project exact viewbox coordinates smoothly onto computed frame points
-    const pixelX = offsetX + (loc.px / viewBoxWidth) * actualWidth;
-    const pixelY = offsetY + (loc.py / viewBoxHeight) * actualHeight;
-
-    pin.style.left = `${pixelX}px`;
-    pin.style.top = `${pixelY}px`;
+    pin.style.left = (loc.px / 100 * W) + 'px';
+    pin.style.top = (loc.py / 100 * H) + 'px';
 
     const color = habitatColor[loc.habitat];
 
@@ -770,8 +778,6 @@ function updateSlots() {
     const oldWarning = slot.querySelector('.slot-overlap-warning');
     if (oldWarning) oldWarning.remove();
 
-    const contentArea = slot.querySelector('.slot-content');
-
     if (locId) {
       const loc = locations.find(l => l.id === locId);
       const color = habitatColor[loc.habitat];
@@ -785,9 +791,9 @@ function updateSlots() {
       loc.speciesSet.forEach(sp => runningSpeciesSet.add(sp));
 
       slot.className = `slot filled slot-${loc.habitat}`;
-      slot.querySelector('.slot-number').style.background = color;
-      
-      contentArea.innerHTML = `
+      const headerRow = slot.querySelector('.slot-header-row');
+      headerRow.querySelector('.slot-number').style.background = color;
+      headerRow.querySelector('.slot-content').innerHTML = `
         <div style="display: flex; gap: 8px; align-items: center;">
           <div class="slot-loc-icon">${loc.icon}</div>
           <div>
@@ -806,8 +812,9 @@ function updateSlots() {
       }
     } else {
       slot.className = 'slot';
-      slot.querySelector('.slot-number').style.background = '';
-      contentArea.innerHTML = `<div class="slot-empty-text">Select a location from the map</div>`;
+      const headerRow = slot.querySelector('.slot-header-row');
+      headerRow.querySelector('.slot-number').style.background = '';
+      headerRow.querySelector('.slot-content').innerHTML = `<div class="slot-empty-text">Select a location from the map</div>`;
     }
   }
 }
