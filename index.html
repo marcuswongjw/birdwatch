@@ -581,71 +581,230 @@
 
 <script>
 // ── DATA ──
+// Species appearing at nearly every location (ubiquitous across Singapore habitats)
+const UBIQUITOUS = [
+  "Collared Kingfisher","Olive-backed Sunbird","Yellow-vented Bulbul","Javan Myna",
+  "Asian Koel","Pink-necked Green Pigeon","Pacific Swallow","Black-naped Oriole",
+  "Common Iora","Ashy Tailorbird","Crimson Sunbird","Scarlet-backed Flowerpecker",
+  "Oriental White-eye","Pied Fantail","Common Myna","Greater Coucal",
+  "Barn Swallow","Spotted Dove"
+];
+
 const locations = [
   // Wetlands & Mangroves
-  { id: 1, name: "Sungei Buloh Wetland Reserve", short: "Sungei Buloh", icon: "🌿", habitat: "wetland", birds: 180, species: 82,
+  { id: 1, name: "Sungei Buloh Wetland Reserve", short: "Sungei Buloh", icon: "🌿", habitat: "wetland", birds: 180,
+    speciesSet: [...UBIQUITOUS,
+      "Common Kingfisher","Stork-billed Kingfisher","Little Egret","Great Egret","Grey Heron",
+      "Purple Heron","Striated Heron","Black-crowned Night Heron","Yellow Bittern","Cinnamon Bittern",
+      "White-breasted Waterhen","Purple Swamphen","Common Moorhen","Common Sandpiper",
+      "White-bellied Sea Eagle","Brahminy Kite","Lesser Adjutant","Milky Stork","Oriental Darter",
+      "Little Cormorant","Pacific Golden Plover","Common Greenshank","Whimbrel","Mangrove Whistler",
+      "Mangrove Blue Flycatcher","Copper-throated Sunbird","Rufous-tailed Tailorbird","Little Ringed Plover",
+      "Pacific Reef Heron","Asian Openbill","Ruddy Turnstone","Blue-tailed Bee-eater","Red-wattled Lapwing",
+      "Black-winged Stilt","Lesser Whistling-duck","Cotton Pygmy-goose","Pheasant-tailed Jacana",
+      "Glossy Ibis","Great-billed Heron","Malayan Night Heron","Terek Sandpiper","Curlew Sandpiper",
+      "Common Redshank","Marsh Sandpiper","Wood Sandpiper","Black-tailed Godwit","Bar-tailed Godwit",
+      "Little Tern","Whiskered Tern","White-winged Tern","Osprey","Brown-winged Kingfisher",
+      "Rufous-backed Kingfisher","Black-capped Kingfisher","Changeable Hawk-Eagle","Grey-headed Fish Eagle",
+      "Buffy Fish Owl","Blue-throated Bee-eater","Chestnut-headed Bee-eater","Blue-winged Pitta",
+      "Siberian Rubythroat","Siberian Blue Robin","Great Cormorant","Grey-rumped Swiftlet"
+    ],
     highlight: "Egrets, kingfishers & waders",
     terrain: "Tidal mudflats, dense mangrove forest & freshwater ponds",
     tip: "Visit at low tide — shorebirds feed actively on exposed mudflats.",
-    // Map coords as % of SVG viewBox (900×520): x%, y%
     px: 10.5, py: 36 },
-  { id: 2, name: "Pasir Ris Park", short: "Pasir Ris Park", icon: "🦀", habitat: "wetland", birds: 130, species: 58,
+
+  { id: 2, name: "Pasir Ris Park", short: "Pasir Ris Park", icon: "🦀", habitat: "wetland", birds: 130,
+    speciesSet: [...UBIQUITOUS,
+      "Common Kingfisher","Stork-billed Kingfisher","Little Egret","Grey Heron","Purple Heron",
+      "Striated Heron","Black-crowned Night Heron","Yellow Bittern","White-breasted Waterhen",
+      "Common Moorhen","Common Sandpiper","White-bellied Sea Eagle","Brahminy Kite","Lesser Adjutant",
+      "Little Cormorant","Pacific Golden Plover","Common Greenshank","Whimbrel","Mangrove Whistler",
+      "Mangrove Blue Flycatcher","Copper-throated Sunbird","Rufous-tailed Tailorbird","Little Ringed Plover",
+      "Pacific Reef Heron","Ruddy Turnstone","Red-wattled Lapwing","Black-winged Stilt","Common Redshank",
+      "Marsh Sandpiper","Little Tern","Common Tern","Osprey","Changeable Hawk-Eagle","Grey-headed Fish Eagle",
+      "Blue-throated Bee-eater","Blue-winged Pitta","Siberian Rubythroat","Greater Sand Plover",
+      "Lesser Sand Plover","Terek Sandpiper"
+    ],
     highlight: "Herons, sea eagles & sandpipers",
     terrain: "Coastal mangrove boardwalk, sandy beach & freshwater pond",
     tip: "Walk the mangrove boardwalk and look up into branches above the water.",
     px: 82, py: 44 },
-  { id: 3, name: "Pulau Ubin (Chek Jawa)", short: "Pulau Ubin", icon: "🏝️", habitat: "wetland", birds: 160, species: 71,
+
+  { id: 3, name: "Pulau Ubin (Chek Jawa)", short: "Pulau Ubin", icon: "🏝️", habitat: "wetland", birds: 160,
+    speciesSet: [...UBIQUITOUS,
+      "Common Kingfisher","Stork-billed Kingfisher","Little Egret","Great Egret","Grey Heron",
+      "Purple Heron","Striated Heron","Black-crowned Night Heron","Yellow Bittern","White-breasted Waterhen",
+      "Purple Swamphen","Common Moorhen","Common Sandpiper","White-bellied Sea Eagle","Brahminy Kite",
+      "Oriental Darter","Little Cormorant","Pacific Golden Plover","Common Greenshank","Whimbrel",
+      "Mangrove Whistler","Mangrove Blue Flycatcher","Copper-throated Sunbird","Rufous-tailed Tailorbird",
+      "Pacific Reef Heron","Asian Openbill","Ruddy Turnstone","Blue-tailed Bee-eater","Red-wattled Lapwing",
+      "Lesser Adjutant","Black-winged Stilt","Cotton Pygmy-goose","Osprey","Brown-winged Kingfisher",
+      "Black-capped Kingfisher","Grey-headed Fish Eagle","Buffy Fish Owl","Blue-throated Bee-eater",
+      "Rufous Woodpecker","Banded Woodpecker","Common Flameback","Red Junglefowl",
+      "Greater Racket-tailed Drongo","Asian Fairy-bluebird","Blue-winged Pitta","Cinnamon-headed Green Pigeon",
+      "Little Green Pigeon","Pied Imperial Pigeon","Green Imperial Pigeon","White-crowned Forktail",
+      "Malaysian Blue Flycatcher","White-necked Babbler","Changeable Hawk-Eagle"
+    ],
     highlight: "Storks, kingfishers & collared owls",
     terrain: "Seagrass lagoon, rocky shore, mangrove & coastal dipterocarp forest",
     tip: "Head to Chek Jawa at dawn — wetlands are most active in early morning.",
     px: 88.5, py: 24 },
 
   // Rainforest & Hill Forest
-  { id: 4, name: "Central Catchment Reserve", short: "Central Catchment", icon: "🌳", habitat: "rainforest", birds: 220, species: 96,
+  { id: 4, name: "Central Catchment Reserve", short: "Central Catchment", icon: "🌳", habitat: "rainforest", birds: 220,
+    speciesSet: [...UBIQUITOUS,
+      "Common Kingfisher","Stork-billed Kingfisher","Little Egret","Grey Heron","Purple Heron",
+      "Black-crowned Night Heron","White-breasted Waterhen","Common Sandpiper","White-bellied Sea Eagle",
+      "Brahminy Kite","Little Cormorant","Osprey","Grey-headed Fish Eagle","Rufous Woodpecker",
+      "Banded Woodpecker","Common Flameback","White-bellied Woodpecker","Maroon Woodpecker",
+      "Buff-rumped Woodpecker","Grey-and-buff Woodpecker","Red Junglefowl","Greater Racket-tailed Drongo",
+      "Hair-crested Drongo","Asian Fairy-bluebird","Asian Paradise-flycatcher","Blue-winged Leafbird",
+      "Greater Green Leafbird","Lesser Green Leafbird","Banded Pitta","Blue-winged Pitta","Garnet Pitta",
+      "Orange-bellied Flowerpecker","Abbott's Babbler","Scaly-crowned Babbler","Moustached Babbler",
+      "Chestnut-winged Babbler","Short-tailed Babbler","Ferruginous Babbler","Grey-headed Babbler",
+      "White-necked Babbler","Velvet-fronted Nuthatch","White-throated Fantail","Malaysian Blue Flycatcher",
+      "White-crowned Forktail","Green Broadbill","Black-and-yellow Broadbill","Long-tailed Broadbill",
+      "Dusky Broadbill","Silver-breasted Broadbill","Banded Broadbill","Grey-rumped Treeswift",
+      "Whiskered Treeswift","Brown-backed Needletail","Cinnamon-headed Green Pigeon","Little Green Pigeon",
+      "Jambu Fruit Dove","Large Green Pigeon","Pied Imperial Pigeon","Green Imperial Pigeon",
+      "Chestnut-backed Scimitar-Babbler","Large Scimitar-Babbler","Rufous-winged Philentoma",
+      "Maroon-breasted Philentoma","Verditer Flycatcher","Mugimaki Flycatcher","Asian Brown Flycatcher",
+      "Dark-sided Flycatcher","Narcissus Flycatcher","Siberian Blue Robin","Siberian Rubythroat",
+      "Oriental Magpie-Robin","White-rumped Shama","Changeable Hawk-Eagle","Blyth's Hawk-Eagle",
+      "Wallace's Hawk-Eagle","Rufous-bellied Eagle","Buffy Fish Owl","Little Grebe"
+    ],
     highlight: "Pittas, flowerpeckers & babblers",
     terrain: "Primary lowland rainforest, reservoir edges & stream valleys",
     tip: "Move slowly and quietly — forest birds blend into the canopy.",
     px: 46, py: 38 },
-  { id: 5, name: "Bukit Timah Nature Reserve", short: "Bukit Timah", icon: "⛰️", habitat: "rainforest", birds: 200, species: 88,
+
+  { id: 5, name: "Bukit Timah Nature Reserve", short: "Bukit Timah", icon: "⛰️", habitat: "rainforest", birds: 200,
+    speciesSet: [...UBIQUITOUS,
+      "Common Kingfisher","Stork-billed Kingfisher","Grey Heron","Black-crowned Night Heron",
+      "White-breasted Waterhen","White-bellied Sea Eagle","Brahminy Kite","Osprey","Grey-headed Fish Eagle",
+      "Rufous Woodpecker","Banded Woodpecker","Common Flameback","White-bellied Woodpecker",
+      "Maroon Woodpecker","Buff-rumped Woodpecker","Grey-and-buff Woodpecker","Red Junglefowl",
+      "Greater Racket-tailed Drongo","Hair-crested Drongo","Asian Fairy-bluebird","Asian Paradise-flycatcher",
+      "Blue-winged Leafbird","Greater Green Leafbird","Lesser Green Leafbird","Banded Pitta","Blue-winged Pitta",
+      "Garnet Pitta","Orange-bellied Flowerpecker","Abbott's Babbler","Scaly-crowned Babbler",
+      "Moustached Babbler","Chestnut-winged Babbler","Short-tailed Babbler","Ferruginous Babbler",
+      "Grey-headed Babbler","White-necked Babbler","Velvet-fronted Nuthatch","White-throated Fantail",
+      "Malaysian Blue Flycatcher","White-crowned Forktail","Green Broadbill","Black-and-yellow Broadbill",
+      "Long-tailed Broadbill","Silver-breasted Broadbill","Banded Broadbill","Grey-rumped Treeswift",
+      "Whiskered Treeswift","Cinnamon-headed Green Pigeon","Little Green Pigeon","Jambu Fruit Dove",
+      "Large Green Pigeon","Pied Imperial Pigeon","Chestnut-backed Scimitar-Babbler",
+      "Large Scimitar-Babbler","Rufous-winged Philentoma","Maroon-breasted Philentoma",
+      "Verditer Flycatcher","Asian Brown Flycatcher","Dark-sided Flycatcher","Narcissus Flycatcher",
+      "Siberian Blue Robin","Oriental Magpie-Robin","White-rumped Shama","Changeable Hawk-Eagle",
+      "Blyth's Hawk-Eagle","Wallace's Hawk-Eagle","Rufous-bellied Eagle","Buffy Fish Owl",
+      "Brown Wood Owl","Straw-headed Bulbul"
+    ],
     highlight: "Drongos, woodpeckers & jungle fowl",
     terrain: "Granite hill summit (163 m), primary rainforest & rocky ridge trails",
     tip: "Bring binoculars — many birds stay high in the tree canopy.",
     px: 31, py: 45 },
-  { id: 6, name: "Dairy Farm Nature Park", short: "Dairy Farm", icon: "🌲", habitat: "rainforest", birds: 120, species: 54,
+
+  { id: 6, name: "Dairy Farm Nature Park", short: "Dairy Farm", icon: "🌲", habitat: "rainforest", birds: 120,
+    speciesSet: [...UBIQUITOUS,
+      "Common Kingfisher","Rufous Woodpecker","Banded Woodpecker","Common Flameback","Red Junglefowl",
+      "Greater Racket-tailed Drongo","Asian Fairy-bluebird","Blue-winged Leafbird","Greater Green Leafbird",
+      "Banded Pitta","Orange-bellied Flowerpecker","Abbott's Babbler","Scaly-crowned Babbler",
+      "Moustached Babbler","White-necked Babbler","White-throated Fantail","Malaysian Blue Flycatcher",
+      "Grey-rumped Treeswift","Cinnamon-headed Green Pigeon","Little Green Pigeon","Jambu Fruit Dove",
+      "Large Green Pigeon","Chestnut-backed Scimitar-Babbler","Verditer Flycatcher","Asian Brown Flycatcher",
+      "Siberian Blue Robin","Oriental Magpie-Robin","White-rumped Shama","Changeable Hawk-Eagle",
+      "Buffy Fish Owl","Straw-headed Bulbul","Little Grebe","Grey Heron","White-breasted Waterhen",
+      "Common Moorhen","Blue-crowned Hanging Parrot"
+    ],
     highlight: "Bulbuls, tailorbirds & starlings",
     terrain: "Secondary forest, limestone Bukit Gombak hills & old quarry lake",
     tip: "The quarry lake edge is excellent — scan for kingfishers on branches.",
     px: 28, py: 36 },
 
   // Coastal & Open Water
-  { id: 7, name: "East Coast Park", short: "East Coast Park", icon: "🌊", habitat: "coastal", birds: 70, species: 35,
+  { id: 7, name: "East Coast Park", short: "East Coast Park", icon: "🌊", habitat: "coastal", birds: 70,
+    speciesSet: [...UBIQUITOUS,
+      "White-bellied Sea Eagle","Little Tern","Common Tern","Black-naped Tern","White-winged Tern",
+      "Whiskered Tern","Lesser Crested Tern","Pacific Golden Plover","Common Sandpiper","Terek Sandpiper",
+      "Curlew Sandpiper","Sanderling","Little Ringed Plover","Kentish Plover","Lesser Sand Plover",
+      "House Swift","Grey-rumped Swiftlet"
+    ],
     highlight: "Terns, plovers & swallows",
     terrain: "Reclaimed sandy beach, open sea horizon & coastal parkland",
     tip: "Scan the skies over the sea — aerial birds like swifts are hard to spot but rewarding.",
     px: 68, py: 71 },
-  { id: 8, name: "Seletar Reservoir", short: "Seletar Reservoir", icon: "🚤", habitat: "coastal", birds: 110, species: 48,
+
+  { id: 8, name: "Seletar Reservoir", short: "Seletar Reservoir", icon: "🚤", habitat: "coastal", birds: 110,
+    speciesSet: [...UBIQUITOUS,
+      "Common Kingfisher","Stork-billed Kingfisher","Little Egret","Grey Heron","Purple Heron",
+      "Black-crowned Night Heron","White-breasted Waterhen","Common Moorhen","Common Sandpiper",
+      "White-bellied Sea Eagle","Brahminy Kite","Little Cormorant","Great Cormorant","Osprey",
+      "Grey-headed Fish Eagle","Grey Wagtail","White Wagtail","Yellow Wagtail","Rufous Woodpecker",
+      "Common Flameback","Greater Racket-tailed Drongo","Asian Fairy-bluebird","Blue-winged Leafbird",
+      "Little Grebe","Lesser Whistling-duck","Cotton Pygmy-goose","Purple Swamphen",
+      "Asian Brown Flycatcher","Oriental Magpie-Robin","White-rumped Shama"
+    ],
     highlight: "Cormorants, herons & wagtails",
     terrain: "Large open reservoir, secondary forest margins & concrete dam road",
     tip: "Walk the dam road at dawn — waterbirds roost here overnight and leave at first light.",
     px: 57, py: 26 },
-  { id: 9, name: "Kranji Reservoir", short: "Kranji Reservoir", icon: "💦", habitat: "coastal", birds: 95, species: 43,
+
+  { id: 9, name: "Kranji Reservoir", short: "Kranji Reservoir", icon: "💦", habitat: "coastal", birds: 95,
+    speciesSet: [...UBIQUITOUS,
+      "Common Kingfisher","Stork-billed Kingfisher","Little Egret","Grey Heron","Purple Heron",
+      "Striated Heron","Black-crowned Night Heron","White-breasted Waterhen","Common Moorhen",
+      "Common Sandpiper","White-bellied Sea Eagle","Brahminy Kite","Little Cormorant","Osprey",
+      "Grey-headed Fish Eagle","Grey Wagtail","Yellow Wagtail","Copper-throated Sunbird",
+      "Mangrove Whistler","Mangrove Blue Flycatcher","Purple Swamphen","Lesser Whistling-duck",
+      "Cotton Pygmy-goose","Blue-tailed Bee-eater","Red-wattled Lapwing"
+    ],
     highlight: "Osprey, purple herons & moorhens",
     terrain: "Reservoir shoreline, mangrove fringe & elevated dam wall viewpoint",
     tip: "The dam wall gives an elevated view — great for spotting birds over open water.",
     px: 15, py: 44 },
 
   // Urban & Reservoir
-  { id: 10, name: "Singapore Botanic Gardens", short: "Botanic Gardens", icon: "🌺", habitat: "urban", birds: 95, species: 44,
+  { id: 10, name: "Singapore Botanic Gardens", short: "Botanic Gardens", icon: "🌺", habitat: "urban", birds: 95,
+    speciesSet: [...UBIQUITOUS,
+      "Common Kingfisher","Oriental Magpie-Robin","White-rumped Shama","Hill Myna","Asian Glossy Starling",
+      "White-vented Myna","Red-whiskered Bulbul","Sooty-headed Bulbul","Stripe-throated Bulbul",
+      "Straw-headed Bulbul","Blue-crowned Hanging Parrot","Long-tailed Parakeet","Red-breasted Parakeet",
+      "White-bellied Munia","Scaly-breasted Munia","Chestnut Munia","Purple-throated Sunbird",
+      "Brown-throated Sunbird","Asian Palm Swift","Grey-rumped Treeswift","Rufous Woodpecker",
+      "Common Flameback","Greater Racket-tailed Drongo","Little Grebe","Grey Heron",
+      "White-breasted Waterhen"
+    ],
     highlight: "Sunbirds, mynas & hornbills",
     terrain: "Manicured parkland, rainforest remnant patch & ornamental swan lakes",
     tip: "Arrive between 7–9am — birds are most active before the crowds.",
     px: 37, py: 61 },
-  { id: 11, name: "Lower Peirce Reservoir", short: "Lower Peirce", icon: "💧", habitat: "urban", birds: 140, species: 63,
+
+  { id: 11, name: "Lower Peirce Reservoir", short: "Lower Peirce", icon: "💧", habitat: "urban", birds: 140,
+    speciesSet: [...UBIQUITOUS,
+      "Common Kingfisher","Stork-billed Kingfisher","Little Egret","Grey Heron","Purple Heron",
+      "Black-crowned Night Heron","White-breasted Waterhen","Common Moorhen","Common Sandpiper",
+      "White-bellied Sea Eagle","Brahminy Kite","Little Cormorant","Osprey","Grey-headed Fish Eagle",
+      "Rufous Woodpecker","Banded Woodpecker","Common Flameback","White-bellied Woodpecker",
+      "Red Junglefowl","Greater Racket-tailed Drongo","Hair-crested Drongo","Asian Fairy-bluebird",
+      "Blue-winged Leafbird","Greater Green Leafbird","Banded Pitta","Orange-bellied Flowerpecker",
+      "Abbott's Babbler","Moustached Babbler","White-necked Babbler","White-throated Fantail",
+      "Malaysian Blue Flycatcher","White-crowned Forktail","Cinnamon-headed Green Pigeon",
+      "Little Green Pigeon","Jambu Fruit Dove","Velvet-fronted Nuthatch","Verditer Flycatcher",
+      "Asian Brown Flycatcher","Oriental Magpie-Robin","White-rumped Shama","Changeable Hawk-Eagle",
+      "Buffy Fish Owl","Little Grebe","Lesser Whistling-duck","Purple Swamphen"
+    ],
     highlight: "Kingfishers, rails & night herons",
     terrain: "Forest-fringed reservoir, mature secondary forest & waterside boardwalk",
     tip: "The forested trail by the reservoir edge is the main hotspot — stay patient.",
     px: 47, py: 46 },
-  { id: 12, name: "Bishan-Ang Mo Kio Park", short: "Bishan-AMK Park", icon: "🏙️", habitat: "urban", birds: 65, species: 30,
+
+  { id: 12, name: "Bishan-Ang Mo Kio Park", short: "Bishan-AMK Park", icon: "🏙️", habitat: "urban", birds: 65,
+    speciesSet: [...UBIQUITOUS,
+      "Common Kingfisher","Little Egret","Grey Heron","White-breasted Waterhen","Common Moorhen",
+      "Common Sandpiper","White-bellied Sea Eagle","Oriental Magpie-Robin","White-rumped Shama",
+      "Grey Wagtail","Little Grebe","Asian Palm Swift"
+    ],
     highlight: "Kingfishers, sunbirds & swallows",
     terrain: "Naturalised river corridor, grassy open parkland & urban ponds",
     tip: "The river corridor attracts kingfishers — watch quietly from the bridges.",
@@ -679,7 +838,7 @@ function renderPins() {
     pin.innerHTML = `
       <div class="pin-tooltip">
         <strong>${loc.name}</strong>
-        ~${loc.birds} birds · ${loc.species} species<br>
+        ~${loc.birds} birds · ${loc.speciesSet.length} species<br>
         <span style="opacity:0.75">${loc.highlight}</span><br>
         <span style="opacity:0.55;font-style:italic">🗺 ${loc.terrain}</span>
       </div>
@@ -748,7 +907,7 @@ function updateSlots() {
       slot.querySelector('.slot-content').innerHTML = `
         <div class="slot-loc-icon">${loc.icon}</div>
         <div class="slot-loc-name">${loc.name}</div>
-        <div class="slot-loc-meta">~${loc.birds} birds · ${loc.species} species</div>
+        <div class="slot-loc-meta">~${loc.birds} birds · ${loc.speciesSet.length} species</div>
         <div class="slot-loc-terrain">🗺 ${loc.terrain}</div>
       `;
     } else {
@@ -766,7 +925,8 @@ function updateResults() {
 
   const chosen = selected.map(id => locations.find(l => l.id === id));
   const totalBirds = chosen.reduce((a, l) => a + l.birds, 0);
-  const totalSpecies = Math.round(chosen.reduce((a, l) => a + l.species, 0) * 0.85);
+  const uniqueSpecies = new Set(chosen.flatMap(l => l.speciesSet));
+  const totalSpecies = uniqueSpecies.size;
   document.getElementById('res-birds').textContent = totalBirds;
   document.getElementById('res-species').textContent = totalSpecies;
 
