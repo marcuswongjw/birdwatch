@@ -282,6 +282,7 @@
   .slot-loc-icon { font-size: 18px; margin-bottom: 2px; }
   .slot-loc-name { font-size: 0.82rem; font-weight: 600; color: var(--bark); line-height: 1.25; }
   .slot-loc-meta { font-size: 0.73rem; color: #888; margin-top: 2px; }
+  .slot-loc-terrain { font-size: 0.7rem; color: #999; font-style: italic; margin-top: 3px; line-height: 1.35; }
   .slot-remove {
     width: 22px; height: 22px;
     border-radius: 50%;
@@ -584,57 +585,69 @@ const locations = [
   // Wetlands & Mangroves
   { id: 1, name: "Sungei Buloh Wetland Reserve", short: "Sungei Buloh", icon: "🌿", habitat: "wetland", birds: 180, species: 82,
     highlight: "Egrets, kingfishers & waders",
+    terrain: "Tidal mudflats, dense mangrove forest & freshwater ponds",
     tip: "Visit at low tide — shorebirds feed actively on exposed mudflats.",
     // Map coords as % of SVG viewBox (900×520): x%, y%
     px: 10.5, py: 36 },
   { id: 2, name: "Pasir Ris Park", short: "Pasir Ris Park", icon: "🦀", habitat: "wetland", birds: 130, species: 58,
     highlight: "Herons, sea eagles & sandpipers",
+    terrain: "Coastal mangrove boardwalk, sandy beach & freshwater pond",
     tip: "Walk the mangrove boardwalk and look up into branches above the water.",
     px: 82, py: 44 },
   { id: 3, name: "Pulau Ubin (Chek Jawa)", short: "Pulau Ubin", icon: "🏝️", habitat: "wetland", birds: 160, species: 71,
     highlight: "Storks, kingfishers & collared owls",
+    terrain: "Seagrass lagoon, rocky shore, mangrove & coastal dipterocarp forest",
     tip: "Head to Chek Jawa at dawn — wetlands are most active in early morning.",
     px: 88.5, py: 24 },
 
   // Rainforest & Hill Forest
   { id: 4, name: "Central Catchment Reserve", short: "Central Catchment", icon: "🌳", habitat: "rainforest", birds: 220, species: 96,
     highlight: "Pittas, flowerpeckers & babblers",
+    terrain: "Primary lowland rainforest, reservoir edges & stream valleys",
     tip: "Move slowly and quietly — forest birds blend into the canopy.",
     px: 46, py: 38 },
   { id: 5, name: "Bukit Timah Nature Reserve", short: "Bukit Timah", icon: "⛰️", habitat: "rainforest", birds: 200, species: 88,
     highlight: "Drongos, woodpeckers & jungle fowl",
+    terrain: "Granite hill summit (163 m), primary rainforest & rocky ridge trails",
     tip: "Bring binoculars — many birds stay high in the tree canopy.",
     px: 31, py: 45 },
   { id: 6, name: "Dairy Farm Nature Park", short: "Dairy Farm", icon: "🌲", habitat: "rainforest", birds: 120, species: 54,
     highlight: "Bulbuls, tailorbirds & starlings",
+    terrain: "Secondary forest, limestone Bukit Gombak hills & old quarry lake",
     tip: "The quarry lake edge is excellent — scan for kingfishers on branches.",
     px: 28, py: 36 },
 
   // Coastal & Open Water
   { id: 7, name: "East Coast Park", short: "East Coast Park", icon: "🌊", habitat: "coastal", birds: 70, species: 35,
     highlight: "Terns, plovers & swallows",
+    terrain: "Reclaimed sandy beach, open sea horizon & coastal parkland",
     tip: "Scan the skies over the sea — aerial birds like swifts are hard to spot but rewarding.",
     px: 68, py: 71 },
   { id: 8, name: "Seletar Reservoir", short: "Seletar Reservoir", icon: "🚤", habitat: "coastal", birds: 110, species: 48,
     highlight: "Cormorants, herons & wagtails",
+    terrain: "Large open reservoir, secondary forest margins & concrete dam road",
     tip: "Walk the dam road at dawn — waterbirds roost here overnight and leave at first light.",
     px: 57, py: 26 },
   { id: 9, name: "Kranji Reservoir", short: "Kranji Reservoir", icon: "💦", habitat: "coastal", birds: 95, species: 43,
     highlight: "Osprey, purple herons & moorhens",
+    terrain: "Reservoir shoreline, mangrove fringe & elevated dam wall viewpoint",
     tip: "The dam wall gives an elevated view — great for spotting birds over open water.",
     px: 15, py: 44 },
 
   // Urban & Reservoir
   { id: 10, name: "Singapore Botanic Gardens", short: "Botanic Gardens", icon: "🌺", habitat: "urban", birds: 95, species: 44,
     highlight: "Sunbirds, mynas & hornbills",
+    terrain: "Manicured parkland, rainforest remnant patch & ornamental swan lakes",
     tip: "Arrive between 7–9am — birds are most active before the crowds.",
     px: 37, py: 61 },
   { id: 11, name: "Lower Peirce Reservoir", short: "Lower Peirce", icon: "💧", habitat: "urban", birds: 140, species: 63,
     highlight: "Kingfishers, rails & night herons",
+    terrain: "Forest-fringed reservoir, mature secondary forest & waterside boardwalk",
     tip: "The forested trail by the reservoir edge is the main hotspot — stay patient.",
     px: 47, py: 46 },
   { id: 12, name: "Bishan-Ang Mo Kio Park", short: "Bishan-AMK Park", icon: "🏙️", habitat: "urban", birds: 65, species: 30,
     highlight: "Kingfishers, sunbirds & swallows",
+    terrain: "Naturalised river corridor, grassy open parkland & urban ponds",
     tip: "The river corridor attracts kingfishers — watch quietly from the bridges.",
     px: 52, py: 41 },
 ];
@@ -667,7 +680,8 @@ function renderPins() {
       <div class="pin-tooltip">
         <strong>${loc.name}</strong>
         ~${loc.birds} birds · ${loc.species} species<br>
-        <span style="opacity:0.75">${loc.highlight}</span>
+        <span style="opacity:0.75">${loc.highlight}</span><br>
+        <span style="opacity:0.55;font-style:italic">🗺 ${loc.terrain}</span>
       </div>
       <div class="pin-bubble">
         <span class="pin-icon">${loc.icon}</span>
@@ -735,6 +749,7 @@ function updateSlots() {
         <div class="slot-loc-icon">${loc.icon}</div>
         <div class="slot-loc-name">${loc.name}</div>
         <div class="slot-loc-meta">~${loc.birds} birds · ${loc.species} species</div>
+        <div class="slot-loc-terrain">🗺 ${loc.terrain}</div>
       `;
     } else {
       slot.className = 'slot';
