@@ -31,14 +31,15 @@
     font-family: 'DM Sans', sans-serif;
     color: var(--bark);
     min-height: 100vh;
-    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
   }
 
   /* ── HEADER ── */
   header {
     background: var(--bark);
     color: var(--cream);
-    padding: 1.5rem 2rem 1.2rem;
+    padding: 1.2rem 2rem 1rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -46,7 +47,7 @@
   }
   header h1 {
     font-family: 'Playfair Display', serif;
-    font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+    font-size: clamp(1.2rem, 2.5vw, 1.6rem);
     font-weight: 700;
     letter-spacing: -0.01em;
   }
@@ -69,7 +70,7 @@
 
   /* ── LEGEND ── */
   .legend {
-    display: flex; gap: 1.2rem; padding: 0.75rem 2rem;
+    display: flex; gap: 1.2rem; padding: 0.6rem 2rem;
     background: rgba(44,31,14,0.06); border-bottom: 1px solid rgba(44,31,14,0.1); flex-wrap: wrap;
   }
   .legend-item {
@@ -77,16 +78,22 @@
   }
   .legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
 
-  /* ── MAIN LAYOUT ── */
+  /* ── MAIN HIERARCHICAL LAYOUT ── */
   .main {
-    display: grid;
-    grid-template-columns: 1fr 720px;
-    gap: 0;
-    height: calc(100vh - 100px);
+    display: flex;
+    flex-direction: column;
+    flex: 1;
   }
 
-  /* ── MAP AREA ── */
-  .map-area { position: relative; background: #C8DFF0; overflow: hidden; }
+  /* Map is now full-width at the top */
+  .map-area {
+    position: relative;
+    background: #C8DFF0;
+    overflow: hidden;
+    height: 45vh;
+    min-height: 320px;
+    border-bottom: 1px solid rgba(44,31,14,0.1);
+  }
   .map-area::before {
     content: ''; position: absolute; inset: 0;
     background-image:
@@ -98,79 +105,24 @@
   #map-svg-container { position: relative; width: 100%; height: 100%; }
   #map-svg-container svg { width: 100%; height: 100%; }
 
-  /* ── LOCATION PINS ── */
-  .loc-pin { position: absolute; transform: translate(-50%, -100%); cursor: pointer; z-index: 10; transition: transform 0.18s ease, z-index 0s; }
-  .loc-pin:hover { transform: translate(-50%, -100%) scale(1.12); z-index: 20; }
-  .loc-pin.selected { transform: translate(-50%, -100%) scale(1.1); z-index: 15; }
-  .loc-pin.disabled { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
-  .loc-pin.selected.disabled { opacity: 1; pointer-events: auto; }
-
-  .pin-bubble {
-    background: white; border: 2.5px solid #ccc; border-radius: 10px; padding: 5px 8px;
-    display: flex; align-items: center; gap: 5px; box-shadow: 0 3px 12px rgba(0,0,0,0.18), 0 1px 3px rgba(0,0,0,0.1);
-    white-space: nowrap; position: relative; transition: border-color 0.18s, background 0.18s, box-shadow 0.18s; max-width: 175px;
-  }
-  .pin-bubble::after {
-    content: ''; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%);
-    border: 5px solid transparent; border-top-color: #ccc; transition: border-top-color 0.18s;
-  }
-  .loc-pin.selected .pin-bubble { box-shadow: 0 4px 16px rgba(0,0,0,0.25), 0 2px 6px rgba(0,0,0,0.15); }
-  .pin-icon { font-size: 14px; flex-shrink: 0; }
-  .pin-label { font-size: 11px; font-weight: 600; color: var(--bark); line-height: 1.2; font-family: 'DM Sans', sans-serif; }
-  .pin-check {
-    width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    font-size: 9px; color: white; flex-shrink: 0; opacity: 0; transition: opacity 0.18s;
-  }
-  .loc-pin.selected .pin-check { opacity: 1; }
-
-  .pin-wetland .pin-bubble { border-color: var(--wetland); background: var(--wetland-light); }
-  .pin-wetland .pin-bubble::after { border-top-color: var(--wetland); }
-  .pin-wetland .pin-check { background: var(--wetland); }
-  .pin-rainforest .pin-bubble { border-color: var(--rainforest); background: var(--rainforest-light); }
-  .pin-rainforest .pin-bubble::after { border-top-color: var(--rainforest); }
-  .pin-rainforest .pin-check { background: var(--rainforest); }
-  .pin-coastal .pin-bubble { border-color: var(--coastal); background: var(--coastal-light); }
-  .pin-coastal .pin-bubble::after { border-top-color: var(--coastal); }
-  .pin-coastal .pin-check { background: var(--coastal); }
-  .pin-urban .pin-bubble { border-color: var(--urban); background: var(--urban-light); }
-  .pin-urban .pin-bubble::after { border-top-color: var(--urban); }
-  .pin-urban .pin-check { background: var(--urban); }
-
-  /* ── SIDE PANEL ── */
-  .side-panel {
-    background: white;
-    border-left: 1px solid rgba(44,31,14,0.1);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-
-  .panel-instructions {
-    padding: 1.25rem;
-    border-bottom: 1px solid rgba(44,31,14,0.08);
-  }
-  .panel-instructions h2 { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 600; margin-bottom: 5px; }
-  .panel-instructions p { font-size: 0.8rem; color: #666; line-height: 1.5; }
-
-  .panel-split-container {
+  /* Columns Container shifted below the map */
+  .dashboard-columns {
     display: grid;
     grid-template-columns: 1fr 1fr;
     flex: 1;
-    overflow: hidden;
+    background: white;
   }
 
   .selections-column {
-    padding: 1.25rem;
+    padding: 1.5rem;
     border-right: 1px solid rgba(44,31,14,0.08);
-    overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 0.2rem;
   }
 
   .results-column {
-    padding: 1.25rem;
-    overflow-y: auto;
+    padding: 1.5rem;
     background: #FAFAFA;
     display: flex;
     flex-direction: column;
@@ -232,10 +184,10 @@
   .slot-urban { border-color: var(--urban); background: var(--urban-light); }
   .slot-urban .slot-number { background: var(--urban); }
 
-  /* ── RESULTS CONFIGURATION ── */
+  /* ── RESULTS ── */
   .results-blank-state {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    height: 100%; color: #aaa; font-style: italic; font-size: 0.85rem; text-align: center; padding: 2rem;
+    flex: 1; min-height: 240px; color: #aaa; font-style: italic; font-size: 0.85rem; text-align: center; padding: 2rem;
     border: 2px dashed rgba(44,31,14,0.05); border-radius: 12px; background: rgba(0,0,0,0.01);
   }
   .results-area { display: none; }
@@ -256,13 +208,13 @@
   .stat-bonus-label { font-size: 0.72rem; color: #A07030; font-weight: 500; margin-top: 2px; }
 
   .guilds-title { font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--bark); margin: 1rem 0 0.5rem; }
-  .guild-container { display: flex; flex-direction: column; gap: 6px; margin-bottom: 1rem; }
+  .guild-container { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1rem; }
   .guild-card { background: white; border: 1px solid rgba(44,31,14,0.08); border-radius: 6px; padding: 6px 10px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
   .guild-card.empty { opacity: 0.45; border-style: dashed; background: rgba(0,0,0,0.01); box-shadow: none; }
   .guild-info { display: flex; align-items: center; gap: 8px; }
   .guild-icon { font-size: 1.1rem; }
   .guild-name { font-size: 0.78rem; font-weight: 500; }
-  .guild-count { font-size: 0.75rem; font-weight: 600; background: rgba(44,31,14,0.06); padding: 2px 6px; border-radius: 4px; }
+  .guild-count { font-size: 0.75rem; font-weight: 600; background: rgba(44,31,14,0.06); padding: 2px 6px; border-radius: 4px; white-space: nowrap; }
   .guild-card.empty .guild-count { color: #C03030; background: #FFF0F0; }
 
   .tip-card { background: #FFFBF0; border: 1px solid var(--reed); border-radius: 8px; padding: 0.7rem 0.85rem; font-size: 0.75rem; color: #6B4F1A; line-height: 1.5; }
@@ -274,7 +226,13 @@
   }
   .reset-btn:hover { background: #4a3520; }
 
-  /* ── TOOLTIP ── */
+  /* ── PINS & TOOLTIPS ── */
+  .loc-pin { position: absolute; transform: translate(-50%, -100%); cursor: pointer; z-index: 10; transition: transform 0.18s ease, z-index 0s; }
+  .loc-pin:hover { transform: translate(-50%, -100%) scale(1.12); z-index: 20; }
+  .loc-pin.selected { transform: translate(-50%, -100%) scale(1.1); z-index: 15; }
+  .loc-pin.disabled { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
+  .loc-pin.selected.disabled { opacity: 1; pointer-events: auto; }
+
   .pin-tooltip {
     position: absolute; bottom: calc(100% + 12px); left: 50%; transform: translateX(-50%); background: var(--bark); color: var(--cream);
     border-radius: 8px; padding: 8px 12px; font-size: 11px; line-height: 1.5; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity 0.15s; z-index: 30; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
@@ -284,20 +242,10 @@
   .pin-tooltip::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 5px solid transparent; border-top-color: var(--bark); }
 
   /* ── RESPONSIVENESS ── */
-  @media (max-width: 1100px) {
-    .main { grid-template-columns: 1fr 400px; }
-    .panel-split-container { grid-template-columns: 1fr; overflow-y: auto; }
-    .selections-column { border-right: none; border-bottom: 1px solid rgba(44,31,14,0.08); overflow-y: visible; }
-    .results-column { overflow-y: visible; }
-  }
-
-  @media (max-width: 768px) {
-    .main { grid-template-columns: 1fr; grid-template-rows: 50vh auto; height: auto; }
-    .side-panel { border-left: none; border-top: 1px solid rgba(44,31,14,0.1); }
-    .map-area { height: 50vh; }
-    header { padding: 1rem; }
-    .legend { padding: 0.5rem 1rem; gap: 0.75rem; }
-    .panel-split-container { grid-template-columns: 1fr; }
+  @media (max-width: 840px) {
+    .dashboard-columns { grid-template-columns: 1fr; }
+    .selections-column { border-right: none; border-bottom: 1px solid rgba(44,31,14,0.08); }
+    .guild-container { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -380,70 +328,63 @@
     </div>
   </div>
 
-  <div class="side-panel">
-    <div class="panel-instructions">
-      <h2>🎯 Your Mission</h2>
-      <p>You are a bird photographer! Choose <strong>3 locations</strong> by tapping pins on the map. Target a high diversity of species and guilds across unique habitats.</p>
-    </div>
-
-    <div class="panel-split-container">
-      <div class="selections-column">
-        <div class="slot" id="slot-0">
-          <div class="slot-header-row">
-            <div class="slot-number">1</div>
-            <div class="slot-content"><div class="slot-empty-text">Select a location from the map</div></div>
-            <button class="slot-remove" onclick="removeSlot(0)" title="Remove">✕</button>
-          </div>
-        </div>
-        <div class="slot" id="slot-1">
-          <div class="slot-header-row">
-            <div class="slot-number">2</div>
-            <div class="slot-content"><div class="slot-empty-text">Select a location from the map</div></div>
-            <button class="slot-remove" onclick="removeSlot(1)" title="Remove">✕</button>
-          </div>
-        </div>
-        <div class="slot" id="slot-2">
-          <div class="slot-header-row">
-            <div class="slot-number">3</div>
-            <div class="slot-content"><div class="slot-empty-text">Select a location from the map</div></div>
-            <button class="slot-remove" onclick="removeSlot(2)" title="Remove">✕</button>
-          </div>
+  <div class="dashboard-columns">
+    <div class="selections-column">
+      <div class="slot" id="slot-0">
+        <div class="slot-header-row">
+          <div class="slot-number">1</div>
+          <div class="slot-content"><div class="slot-empty-text">Select a location from the map</div></div>
+          <button class="slot-remove" onclick="removeSlot(0)" title="Remove">✕</button>
         </div>
       </div>
-
-      <div class="results-column">
-        <div class="results-blank-state" id="results-blank-state">
-          📊 Select 3 locations to calculate your birdwatching plan summary and score breakdown
+      <div class="slot" id="slot-1">
+        <div class="slot-header-row">
+          <div class="slot-number">2</div>
+          <div class="slot-content"><div class="slot-empty-text">Select a location from the map</div></div>
+          <button class="slot-remove" onclick="removeSlot(1)" title="Remove">✕</button>
         </div>
-        
-        <div class="results-area" id="results-area">
-          <div class="results-title">📋 Your Birdwatching Plan</div>
-          <div class="stats-grid">
-            <div class="stat-box score">
-              <div class="stat-num" id="res-score">0</div>
-              <div class="stat-desc">Total Diversity Score</div>
-              <div class="stat-bonus-label" id="res-bonus-label">Multiplier: x1.0</div>
-            </div>
-            <div class="stat-box species">
-              <div class="stat-num" id="res-species">0</div>
-              <div class="stat-desc">Unique Species</div>
-            </div>
-            <div class="stat-box birds">
-              <div class="stat-num" id="res-birds">0</div>
-              <div class="stat-desc">Est. Birds Sighted</div>
-            </div>
+      </div>
+      <div class="slot" id="slot-2">
+        <div class="slot-header-row">
+          <div class="slot-number">3</div>
+          <div class="slot-content"><div class="slot-empty-text">Select a location from the map</div></div>
+          <button class="slot-remove" onclick="removeSlot(2)" title="Remove">✕</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="results-column">
+      <div class="results-blank-state" id="results-blank-state">
+        📊 Select 3 locations to calculate your birdwatching plan summary and score breakdown
+      </div>
+      
+      <div class="results-area" id="results-area">
+        <div class="results-title">📋 Your Birdwatching Plan</div>
+        <div class="stats-grid">
+          <div class="stat-box score">
+            <div class="stat-num" id="res-score">0</div>
+            <div class="stat-desc">Total Diversity Score</div>
+            <div class="stat-bonus-label" id="res-bonus-label">Multiplier: x1.0</div>
+          </div>
+          <div class="stat-box species">
+            <div class="stat-num" id="res-species">0</div>
+            <div class="stat-desc">Unique Species</div>
+          </div>
+          <div class="stat-box birds">
+            <div class="stat-num" id="res-birds">0</div>
+            <div class="stat-desc">Est. Birds Sighted</div>
+          </div>
+        </div>
+
+        <div class="guilds-title">🌿 Ecological Group Coverage</div>
+        <div class="guild-container" id="guilds-breakdown">
           </div>
 
-          <div class="guilds-title">🌿 Ecological Group Coverage</div>
-          <div class="guild-container" id="guilds-breakdown">
-            </div>
-
-          <div class="tip-card" id="res-tip">
-            <strong>📷 Photographer Tip</strong>
-            <span id="res-tip-text"></span>
-          </div>
-          <button class="reset-btn" onclick="resetAll()">↩ Choose Different Locations</button>
+        <div class="tip-card" id="res-tip">
+          <strong>📷 Photographer Tip</strong>
+          <span id="res-tip-text"></span>
         </div>
+        <button class="reset-btn" onclick="resetAll()">↩ Choose Different Locations</button>
       </div>
     </div>
   </div>
@@ -777,7 +718,6 @@ function updateSlots() {
     const oldWarning = slot.querySelector('.slot-overlap-warning');
     if (oldWarning) oldWarning.remove();
 
-    // Select the content area nested within the row structure precisely
     const contentArea = slot.querySelector('.slot-content');
 
     if (locId) {
